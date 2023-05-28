@@ -13,6 +13,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const secureStorage = FlutterSecureStorage();
 
+// cf https://stackoverflow.com/a/44788660 pout strambuilder
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeService();
