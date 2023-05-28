@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:i40/main.dart';
 import 'package:i40/myapp.dart';
 
 void main() {
