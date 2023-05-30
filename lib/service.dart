@@ -136,7 +136,7 @@ void onStart(ServiceInstance service) async {
     }
   });
 
-  var timer2 = Timer.periodic(const Duration(seconds: 15), (timer) async {
+  Timer.periodic(const Duration(seconds: 15), (timer) async {
     var res = await FlutterBluePlus.instance.isOn;
     if (res) {
       if (await Permission.bluetoothConnect.isGranted) {
