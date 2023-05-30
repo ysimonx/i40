@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, unused_import
 
 import 'dart:async';
 import 'dart:io';
@@ -8,8 +8,9 @@ import 'package:i40/common.dart';
 import 'package:i40/service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'device.dart';
+import 'data/models/device.dart';
 import 'myapp.dart';
+import 'provision.dart';
 
 // cf https://stackoverflow.com/a/44788660 pout streambuilder
 
@@ -21,10 +22,10 @@ Future<void> main() async {
   String? x = await getClientCloudToken();
 
   Widget nextScreen = const MyApp();
-
   if (x == null) {
-    nextScreen = const MyApp();
+    nextScreen = const Provision();
   }
+
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     [

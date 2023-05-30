@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_this
+
 /*
 
   // cf https://github.com/red-star25/dio_blog/tree/main/lib/data/repository
@@ -26,7 +28,7 @@ class CloudServer {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['serverURL'] = this.serverURL;
     data['provisionDeviceKey'] = this.provisionDeviceKey;
     data['provisionDeviceSecret'] = this.provisionDeviceSecret;
