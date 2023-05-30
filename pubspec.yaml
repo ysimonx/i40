@@ -41,6 +41,7 @@ dependencies:
   flutter_local_notifications: ^14.1.0
   permission_handler: ^10.2.0
   flutter_secure_storage: ^8.0.0
+  flutter_blue_plus: ^1.5.2
 
 dev_dependencies:
   flutter_test:

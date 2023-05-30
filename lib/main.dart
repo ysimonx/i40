@@ -22,12 +22,15 @@ Future<void> main() async {
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     [
+      Permission.location,
       Permission.locationAlways,
       Permission.notification,
       Permission.storage,
       Permission.bluetooth,
       Permission.bluetoothConnect,
-      Permission.bluetoothScan
+      Permission.bluetoothScan,
+      Permission.bluetoothAdvertise,
+      Permission.notification,
     ].request().then((status) {
       runApp(const MyApp());
     });

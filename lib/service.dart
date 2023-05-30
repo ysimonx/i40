@@ -9,6 +9,9 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
@@ -110,7 +113,37 @@ void onStart(ServiceInstance service) async {
   }
 
   service.on('stopService').listen((event) {
+    Platform.isAndroid
+        ? () async {
+            if (await Permission.bluetoothConnect.isGranted) {
+              FlutterBluePlus.instance.turnOff();
+            }
+          }
+        : null;
     service.stopSelf();
+  });
+
+  var bluetoothDevicesList = "";
+
+  var subscription = FlutterBluePlus.instance.scanResults.listen((results) {
+    // do something with scan results
+    print('bluetooth scan :');
+    bluetoothDevicesList = "";
+    for (ScanResult r in results) {
+      bluetoothDevicesList = '${bluetoothDevicesList}, ${r.device.name} ';
+
+      print('${r.device.name} found! rssi: ${r.rssi}');
+    }
+  });
+
+  var timer2 = Timer.periodic(const Duration(seconds: 15), (timer) async {
+    var res = await FlutterBluePlus.instance.isOn;
+    if (res) {
+      if (await Permission.bluetoothConnect.isGranted) {
+        FlutterBluePlus.instance.startScan(
+            scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 5));
+      }
+    }
   });
 
   // bring to foreground
@@ -166,4 +199,11 @@ void onStart(ServiceInstance service) async {
       },
     );
   });
+
+  var res = await FlutterBluePlus.instance.isOn;
+  if (!res) {
+    if (await Permission.bluetoothConnect.isGranted) {
+      FlutterBluePlus.instance.turnOn();
+    }
+  }
 }
