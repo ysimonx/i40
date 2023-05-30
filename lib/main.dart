@@ -5,12 +5,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:i40/common.dart';
-import 'package:i40/service.dart';
+import 'package:i40/services/service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'data/models/device.dart';
-import 'myapp.dart';
-import 'provision.dart';
+import 'ui/myapp.dart';
+import 'ui/provision.dart';
 
 // cf https://stackoverflow.com/a/44788660 pout streambuilder
 
@@ -23,7 +23,7 @@ Future<void> main() async {
 
   Widget nextScreen = const MyApp();
   if (x == null) {
-    nextScreen = const Provision();
+    // nextScreen = const Provision();
   }
 
   if (Platform.isAndroid) {

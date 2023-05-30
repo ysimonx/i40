@@ -43,6 +43,7 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   flutter_blue_plus: ^1.5.2
   dio: ^5.1.2
+  get_it: ^7.6.0
 
 dev_dependencies:
   flutter_test:
