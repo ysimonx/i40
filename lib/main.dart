@@ -22,7 +22,7 @@ Future<void> main() async {
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     [
-      Permission.location,
+      Permission.locationWhenInUse,
       Permission.locationAlways,
       Permission.notification,
       Permission.storage,
