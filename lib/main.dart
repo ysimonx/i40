@@ -1,4 +1,5 @@
-// ignore_for_file: depend_on_referenced_packages, unused_import
+// cf https://github.com/red-star25/dio_blog/tree/main/lib/data/repository
+// cf https://dhruvnakum.xyz/networking-in-flutter-dio
 
 import 'dart:async';
 import 'dart:io';
@@ -8,9 +9,7 @@ import 'package:i40/common.dart';
 import 'package:i40/services/service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'data/models/device.dart';
 import 'ui/myapp.dart';
-import 'ui/provision.dart';
 
 // cf https://stackoverflow.com/a/44788660 pout streambuilder
 
