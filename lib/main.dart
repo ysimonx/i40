@@ -8,6 +8,7 @@ import 'package:i40/common.dart';
 import 'package:i40/service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'device.dart';
 import 'myapp.dart';
 
 // cf https://stackoverflow.com/a/44788660 pout streambuilder
@@ -19,6 +20,11 @@ Future<void> main() async {
 
   String? x = await getClientCloudToken();
 
+  Widget nextScreen = const MyApp();
+
+  if (x == null) {
+    nextScreen = const MyApp();
+  }
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     [
@@ -32,9 +38,9 @@ Future<void> main() async {
       Permission.bluetoothAdvertise,
       Permission.notification,
     ].request().then((status) {
-      runApp(const MyApp());
+      runApp(nextScreen);
     });
   } else {
-    runApp(const MyApp());
+    runApp(nextScreen);
   }
 }
