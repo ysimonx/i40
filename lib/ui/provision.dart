@@ -34,9 +34,13 @@ class Provision extends StatelessWidget {
                   );
                 }
                 Device? d = snapshot.data;
-                print(d?.deviceName);
+                String? token = "empty";
+                if (d != null) {
+                  token = d.provisioningResponse?.credentialsValue;
+                }
+                String s = "Provisionning ${token}";
 
-                return const Center(child: Text("Provisionning"));
+                return Center(child: Text(s));
               } else {
                 return const Center(
                   child: Text('No data'),
