@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../data/models/device.dart';
 import '../di/service_locator.dart';
 import 'controller.dart';
 
-class Provision extends StatefulWidget {
+class Provision extends StatelessWidget {
   Provision({Key? key}) : super(key: key);
   final homeController = getIt<HomeController>();
-
-  @override
-  State<Provision> createState() => _ProvisionState();
-}
-
-class _ProvisionState extends State<Provision> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +15,34 @@ class _ProvisionState extends State<Provision> {
         appBar: AppBar(
           title: const Text('Service App'),
         ),
-        body: const Center(child: Text("Provisionning")),
+        body: FutureBuilder<Device>(
+            future: homeController.provisionDevice("testYS"),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                final error = snapshot.error;
+                return Center(
+                  child: Text(
+                    "Error: " + error.toString(),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                if (snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('empty data'),
+                  );
+                }
+                Device? d = snapshot.data;
+                print(d?.deviceName);
+
+                return const Center(child: Text("Provisionning"));
+              } else {
+                return const Center(
+                  child: Text('No data'),
+                );
+              }
+            }),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
           child: const Icon(Icons.play_arrow),

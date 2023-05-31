@@ -12,8 +12,8 @@ class Endpoints {
 
   static const String users = '/users';
 
-  static const String provisionDeviceKey = "a";
-  static const String provisionDeviceSecret = "b";
+  static const String provisionDeviceKey = "l4yp81gmjcg57afvpq8p";
+  static const String provisionDeviceSecret = "9wh3ym3qr2e5jlnbbvbo";
   static const String provision = '/api/v1/provision';
   static const String telemetry = '/api/v1/%s/telemetry';
 }

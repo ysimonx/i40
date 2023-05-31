@@ -49,6 +49,8 @@ class Device {
         : null;
   }
 
+  bool get isEmpty => false;
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['deviceName'] = deviceName;

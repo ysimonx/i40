@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../models/device.dart';
@@ -12,7 +14,9 @@ class DeviceRepository {
   Future<Device> provisionDevice(String deviceName) async {
     try {
       final response = await deviceApi.provisionDeviceApi(deviceName);
-      ProvisioningResponse pr = ProvisioningResponse.fromJson(response.data);
+      var content = jsonDecode(response.toString());
+
+      ProvisioningResponse pr = ProvisioningResponse.fromJson(content);
       Device d = Device(deviceName: deviceName, provisioningResponse: pr);
       return d;
     } on DioError catch (e) {

@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'di/service_locator.dart';
 import 'ui/myapp.dart';
+import 'ui/provision.dart';
 
 Future<void> main() async {
   setup();
@@ -23,7 +24,7 @@ Future<void> main() async {
 
   Widget nextScreen = const MyApp();
   if (x == null) {
-    // nextScreen = const Provision();
+    nextScreen = Provision();
   }
 
   if (Platform.isAndroid) {

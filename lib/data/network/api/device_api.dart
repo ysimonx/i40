@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import '../dio_client.dart';
@@ -10,13 +13,19 @@ class DeviceApi {
 
   Future<Response> provisionDeviceApi(String deviceName) async {
     try {
+      var x = {
+        "provisionDeviceKey": Endpoints.provisionDeviceKey,
+        "provisionDeviceSecret": Endpoints.provisionDeviceSecret,
+        "deviceName": deviceName
+      };
+      var json = jsonEncode(x);
+
       final Response response = await dioClient.post(
         Endpoints.provision,
-        data: {
-          "provisionDeviceKey": Endpoints.provisionDeviceKey,
-          "provisionDeviceSecret": Endpoints.provisionDeviceSecret,
-          'deviceName': deviceName
-        },
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
       );
       return response;
     } catch (e) {
