@@ -9,9 +9,12 @@ import 'package:i40/common.dart';
 import 'package:i40/services/service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'di/service_locator.dart';
 import 'ui/myapp.dart';
 
 Future<void> main() async {
+  setup();
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeService();

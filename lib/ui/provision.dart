@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../di/service_locator.dart';
+import 'controller.dart';
+
 class Provision extends StatefulWidget {
-  const Provision({Key? key}) : super(key: key);
+  Provision({Key? key}) : super(key: key);
+  final homeController = getIt<HomeController>();
 
   @override
   State<Provision> createState() => _ProvisionState();

@@ -2,7 +2,7 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "https://myeurevia.com";
+  static const String baseUrl = "http://vpn.kysoe.com:9090";
 
   // receiveTimeout
   static const Duration receiveTimeout = Duration(seconds: 15000);

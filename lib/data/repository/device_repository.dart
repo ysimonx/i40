@@ -9,10 +9,12 @@ class DeviceRepository {
 
   DeviceRepository(this.deviceApi);
 
-  Future<ProvisioningResponse> provisionDevice(String deviceName) async {
+  Future<Device> provisionDevice(String deviceName) async {
     try {
       final response = await deviceApi.provisionDeviceApi(deviceName);
-      return ProvisioningResponse.fromJson(response.data);
+      ProvisioningResponse pr = ProvisioningResponse.fromJson(response.data);
+      Device d = Device(deviceName: deviceName, provisioningResponse: pr);
+      return d;
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;

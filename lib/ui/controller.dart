@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../data/models/device.dart';
 import '../data/models/new_user_model.dart';
 import '../data/models/user_model.dart';
 import '../data/repository/user_repository.dart';
+import '../data/repository/device_repository.dart';
 import '../di/service_locator.dart';
 
 class HomeController {
   // --------------- Repository -------------
   final userRepository = getIt.get<UserRepository>();
+  final deviceRepository = getIt.get<DeviceRepository>();
 
   // -------------- Textfield Controller ---------------
   final nameController = TextEditingController();
@@ -45,5 +48,10 @@ class HomeController {
   Future<void> deleteNewUser(int id) async {
     await userRepository.deleteNewUserRequested(id);
     newUsers.removeAt(id);
+  }
+
+  Future<Device> provisionDevice(String deviceName) async {
+    final device = await deviceRepository.provisionDevice(deviceName);
+    return device;
   }
 }
