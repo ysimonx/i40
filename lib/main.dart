@@ -24,7 +24,8 @@ Future<void> main() async {
 
   Widget nextScreen = const MyApp();
   if (x == null) {
-    nextScreen = Provision();
+    String? deviceName = await getDeviceId();
+    nextScreen = Provision(deviceName: deviceName);
   }
 
   if (Platform.isAndroid) {

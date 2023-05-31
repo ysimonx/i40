@@ -5,7 +5,9 @@ import '../di/service_locator.dart';
 import 'controller.dart';
 
 class Provision extends StatelessWidget {
-  Provision({Key? key}) : super(key: key);
+  final String? deviceName;
+
+  Provision({Key? key, required this.deviceName}) : super(key: key);
   final homeController = getIt<HomeController>();
 
   @override
@@ -16,7 +18,7 @@ class Provision extends StatelessWidget {
           title: const Text('Service App'),
         ),
         body: FutureBuilder<Device>(
-            future: homeController.provisionDevice("testYS"),
+            future: homeController.provisionDevice(deviceName),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

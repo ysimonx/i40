@@ -11,7 +11,7 @@ class DeviceApi {
 
   DeviceApi({required this.dioClient});
 
-  Future<Response> provisionDeviceApi(String deviceName) async {
+  Future<Response> provisionDeviceApi(String? deviceName) async {
     try {
       var x = {
         "provisionDeviceKey": Endpoints.provisionDeviceKey,

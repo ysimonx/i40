@@ -50,7 +50,7 @@ class HomeController {
     newUsers.removeAt(id);
   }
 
-  Future<Device> provisionDevice(String deviceName) async {
+  Future<Device> provisionDevice(String? deviceName) async {
     final device = await deviceRepository.provisionDevice(deviceName);
     return device;
   }
