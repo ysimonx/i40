@@ -11,8 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'ui/myapp.dart';
 
-// cf https://stackoverflow.com/a/44788660 pout streambuilder
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
