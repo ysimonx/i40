@@ -14,7 +14,7 @@ import 'ui/myapp.dart';
 import 'ui/provision.dart';
 
 Future<void> main() async {
-  setup();
+  setupGetIt();
 
   WidgetsFlutterBinding.ensureInitialized();
 

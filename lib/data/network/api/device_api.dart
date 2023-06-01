@@ -32,4 +32,24 @@ class DeviceApi {
       rethrow;
     }
   }
+
+  Future<Response> sendTelemetryDeviceApi(
+      String token, Map<String, dynamic> telemetryJSON) async {
+    String json = jsonEncode(telemetryJSON);
+
+    String uri = Endpoints.telemetry;
+    uri = uri.replaceFirst("%ACCESS_TOKEN%", token);
+    try {
+      final Response response = await dioClient.post(
+        uri,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

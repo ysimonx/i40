@@ -12,6 +12,28 @@ class DeviceRepository {
 
   DeviceRepository(this.deviceApi);
 
+  Future sendTelemetry(Map<String, dynamic> telemetryJSON) async {
+    String? token = await getClientCloudToken();
+
+    if (token != null) {
+      try {
+        final Response response =
+            await deviceApi.sendTelemetryDeviceApi(token, telemetryJSON);
+        if (response.statusCode == 200) {
+          return;
+        } else {
+          final errorMessage =
+              "telemetry failed with status code ${response.statusCode.toString()}";
+          throw errorMessage;
+        }
+      } on DioError catch (e) {
+        final errorMessage = DioExceptions.fromDioError(e).toString();
+        throw errorMessage;
+      }
+    }
+    return;
+  }
+
   Future<Device> provisionDevice(String? deviceName) async {
     try {
       final response = await deviceApi.provisionDeviceApi(deviceName);

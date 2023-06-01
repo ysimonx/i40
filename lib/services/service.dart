@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -12,6 +13,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:geolocator/geolocator.dart';
+
+import '../di/service_locator.dart';
+import '../ui/controller.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
@@ -92,6 +98,10 @@ void onStart(ServiceInstance service) async {
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
 
+  setupGetIt();
+
+  final homeController = getIt<HomeController>();
+
   // For flutter prior to version 3.0.0
   // We have to register the plugin manually
 
@@ -136,7 +146,45 @@ void onStart(ServiceInstance service) async {
     }
   });
 
-  Timer.periodic(const Duration(seconds: 15), (timer) async {
+  Timer.periodic(const Duration(seconds: 10), (timer) async {
+    // cf https://stackoverflow.com/a/71761201
+    LocationPermission permission;
+
+    bool serviceEnabled;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print('Location services are disabled.');
+      return;
+    }
+
+    /* 
+    permission = await Geolocator.checkPermission();
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      print('Location permissions are denied');
+      return;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+    */
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    homeController.sendTelemetry(
+        {"longitude": position.longitude, "latitude": position.latitude});
+
+    /* homeController.sendTelemetry(
+        {"longitude": position.longitude, "latitude": position.latitude});
+    */
+    print(
+        'Location Position : ${position.longitude.toString()} :${position.latitude.toString()}');
+    return;
+  });
+
+  Timer.periodic(const Duration(seconds: 60), (timer) async {
     var res = await FlutterBluePlus.instance.isOn;
     if (res) {
       if (await Permission.bluetoothConnect.isGranted) {

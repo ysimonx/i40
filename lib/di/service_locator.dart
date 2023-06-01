@@ -11,13 +11,12 @@ import '../ui/controller.dart';
 
 final getIt = GetIt.instance;
 
-Future<void> setup() async {
+Future<void> setupGetIt() async {
   getIt.registerSingleton(Dio());
   getIt.registerSingleton(DioClient(getIt<Dio>()));
   getIt.registerSingleton(UserApi(dioClient: getIt<DioClient>()));
   getIt.registerSingleton(UserRepository(getIt.get<UserApi>()));
   getIt.registerSingleton(DeviceApi(dioClient: getIt<DioClient>()));
   getIt.registerSingleton(DeviceRepository(getIt.get<DeviceApi>()));
-
   getIt.registerSingleton(HomeController());
 }

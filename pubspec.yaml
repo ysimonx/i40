@@ -45,6 +45,7 @@ dependencies:
   dio: ^5.1.2
   get_it: ^7.6.0
   android_id: ^0.3.3
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_test:
