@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -138,15 +137,19 @@ void onStart(ServiceInstance service) async {
   var subscription = FlutterBluePlus.instance.scanResults.listen((results) {
     // do something with scan results
     print('bluetooth scan :');
+
+    // final Map<String, dynamic> jsonResult = Map<String, dynamic>();
+
     bluetoothDevicesList = "";
     for (ScanResult r in results) {
       bluetoothDevicesList = '${bluetoothDevicesList}, ${r.device.name} ';
-
-      print('${r.device.name} found! rssi: ${r.rssi}');
+      print('${r.device.name} found! id: ${r.device.id} rssi: ${r.rssi}');
     }
+
+    // homeController.sendTelemetry();
   });
 
-  Timer.periodic(const Duration(seconds: 10), (timer) async {
+  Timer.periodic(const Duration(seconds: 60), (timer) async {
     // cf https://stackoverflow.com/a/71761201
     LocationPermission permission;
 
@@ -176,9 +179,6 @@ void onStart(ServiceInstance service) async {
     homeController.sendTelemetry(
         {"longitude": position.longitude, "latitude": position.latitude});
 
-    /* homeController.sendTelemetry(
-        {"longitude": position.longitude, "latitude": position.latitude});
-    */
     print(
         'Location Position : ${position.longitude.toString()} :${position.latitude.toString()}');
     return;
