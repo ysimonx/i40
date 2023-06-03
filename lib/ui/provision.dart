@@ -24,29 +24,37 @@ class Provision extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 final error = snapshot.error;
-                return Center(
-                  child: Text(
-                    "Error: " + error.toString(),
-                  ),
+                return Center(child: Text("Error: " + error.toString()));
+              } else if (!snapshot.hasData) {
+                return const Center(
+                  child: Text('No data'),
                 );
-              } else if (snapshot.hasData) {
+              } else {
                 if (snapshot.data!.isEmpty) {
                   return const Center(
                     child: Text('empty data'),
                   );
                 }
+
                 Device? d = snapshot.data;
                 String? token = "empty";
                 if (d != null) {
                   token = d.provisioningResponse?.credentialsValue;
                 }
-                String s = "Provisionning ${token}";
+                String s = "token is ${token}";
 
-                return Center(child: Text(s));
-              } else {
-                return const Center(
-                  child: Text('No data'),
-                );
+                return Center(
+                    child: Container(
+                        width: 300,
+                        height: 300,
+                        child: ListView(shrinkWrap: true, children: [
+                          Text(s),
+                          const Text("test"),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: Text("Suite"),
+                          )
+                        ])));
               }
             }),
         floatingActionButton: FloatingActionButton(

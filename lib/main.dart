@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:i40/common.dart';
 import 'package:i40/services/service.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'di/service_locator.dart';
 import 'ui/myapp.dart';
@@ -30,19 +29,7 @@ Future<void> main() async {
 
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
-    [
-      Permission.locationWhenInUse,
-      Permission.locationAlways,
-      Permission.notification,
-      Permission.storage,
-      Permission.bluetooth,
-      Permission.bluetoothConnect,
-      Permission.bluetoothScan,
-      Permission.bluetoothAdvertise,
-      Permission.notification,
-    ].request().then((status) {
-      runApp(nextScreen);
-    });
+    runApp(nextScreen);
   } else {
     runApp(nextScreen);
   }

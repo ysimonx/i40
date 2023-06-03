@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:i40/ui/widgets/logview.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'widgets/locationPermission.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -20,8 +23,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return MaterialApp(home: Builder(builder: (BuildContext context) {
+      return Scaffold(
         appBar: AppBar(
           title: const Text('Service App'),
         ),
@@ -81,13 +84,44 @@ class _MyAppState extends State<MyApp> {
             const Expanded(
               child: LogView(),
             ),
+            LocationPermissionWidget(),
+            ElevatedButton(
+              child: Text("Verify Notifications Permissions"),
+              onPressed: () async {
+                // openAppSettings();
+
+                // You can request multiple permissions at once.
+                Map<Permission, PermissionStatus> statuses = await [
+                  Permission.notification
+                  //add more permission to request here.
+                ].request();
+
+                if (statuses[Permission.notification]!.isDenied) {
+                  //check each permission status after.
+                  print("Notification is denied.");
+                } else {
+                  final snackBar = SnackBar(
+                    content: const Text('Notification are enabled !'),
+                    action: SnackBarAction(
+                      label: 'close',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ),
+                  );
+
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
           child: const Icon(Icons.play_arrow),
         ),
-      ),
-    );
+      );
+    }));
   }
 }
