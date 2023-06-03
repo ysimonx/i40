@@ -160,25 +160,12 @@ void onStart(ServiceInstance service) async {
       return;
     }
 
-    /* 
     permission = await Geolocator.checkPermission();
-    permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       print('Location permissions are denied');
       return;
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      print(
-          'Location permissions are permanently denied, we cannot request permissions.');
-      return;
-    }
-    */
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      print('Location permissions are denied');
-      return;
-    }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     homeController.sendTelemetry(

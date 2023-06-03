@@ -4,6 +4,7 @@ import 'package:i40/ui/widgets/logview.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'widgets/locationPermission.dart';
+import 'widgets/notificationPermission.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -85,36 +86,7 @@ class _MyAppState extends State<MyApp> {
               child: LogView(),
             ),
             LocationPermissionWidget(),
-            ElevatedButton(
-              child: Text("Verify Notifications Permissions"),
-              onPressed: () async {
-                // openAppSettings();
-
-                // You can request multiple permissions at once.
-                Map<Permission, PermissionStatus> statuses = await [
-                  Permission.notification
-                  //add more permission to request here.
-                ].request();
-
-                if (statuses[Permission.notification]!.isDenied) {
-                  //check each permission status after.
-                  print("Notification is denied.");
-                } else {
-                  final snackBar = SnackBar(
-                    content: const Text('Notification are enabled !'),
-                    action: SnackBarAction(
-                      label: 'close',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ),
-                  );
-
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }
-              },
-            ),
+            NotificationPermissionWidget(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
