@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:android_id/android_id.dart';
 
@@ -62,4 +63,31 @@ Future<String?> getDeviceId() async {
   }
 
   return deviceId;
+}
+
+theme() {
+  return ThemeData.light().copyWith(
+    colorScheme: ColorScheme.fromSwatch().copyWith(
+      // change the appbar color
+      primary: Colors.green[800],
+    ),
+  );
+  /* return ThemeData(
+      colorScheme: const ColorScheme(
+    brightness: Brightness.light,
+    primary: Colors.yellow,
+    onPrimary: Colors.black,
+    // Colors that are not relevant to AppBar in LIGHT mode:
+    primaryVariant: Colors.grey,
+    secondary: Colors.grey,
+    secondaryVariant: Colors.grey,
+    onSecondary: Colors.grey,
+    background: Colors.grey,
+    onBackground: Colors.grey,
+    surface: Colors.grey,
+    onSurface: Colors.grey,
+    error: Colors.grey,
+    onError: Colors.grey,
+  ));
+  */
 }

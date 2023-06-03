@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
-class LocationPermissionWidget extends StatefulWidget {
-  const LocationPermissionWidget({super.key});
+class PermissionLocationWidget extends StatefulWidget {
+  const PermissionLocationWidget({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return LocationPermissionWidgetState();
+    return PermissionLocationWidgetState();
   }
 }
 
-class LocationPermissionWidgetState extends State<LocationPermissionWidget> {
+class PermissionLocationWidgetState extends State<PermissionLocationWidget> {
   bool isLocationEnabled = false;
   late Timer _timer;
 

@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
-class NotificationPermissionWidget extends StatefulWidget {
-  const NotificationPermissionWidget({super.key});
+class PermissionNotificationWidget extends StatefulWidget {
+  const PermissionNotificationWidget({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return NotificationPermissionWidgetState();
+    return PermissionNotificationWidgetState();
   }
 }
 
-class NotificationPermissionWidgetState
-    extends State<NotificationPermissionWidget> {
+class PermissionNotificationWidgetState
+    extends State<PermissionNotificationWidget> {
   bool isNotificationEnabled = false;
   late Timer _timer;
 

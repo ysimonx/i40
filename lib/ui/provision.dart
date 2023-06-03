@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../common.dart';
 import '../data/models/device.dart';
 import '../di/service_locator.dart';
 import 'controller.dart';
+import 'widgets/app_bar.dart';
 
 class Provision extends StatelessWidget {
   final String? deviceName;
@@ -13,10 +15,9 @@ class Provision extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: theme(),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Service App'),
-        ),
+        appBar: BaseAppBar(),
         body: FutureBuilder<Device>(
             future: homeController.provisionDevice(deviceName),
             builder: (context, snapshot) {
