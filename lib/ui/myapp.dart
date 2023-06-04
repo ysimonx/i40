@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../common.dart';
 import 'widgets/app_bar.dart';
 import 'widgets/permission_location.dart';
+import 'widgets/permission_bluetooth.dart';
 import 'widgets/permission_notification.dart';
 
 class MyApp extends StatefulWidget {
@@ -89,6 +90,7 @@ class _MyAppState extends State<MyApp> {
                   child: LogView(),
                 ),
                 const PermissionLocationWidget(),
+                const PermissionBluetoothWidget(),
                 const PermissionNotificationWidget(),
               ],
             ),

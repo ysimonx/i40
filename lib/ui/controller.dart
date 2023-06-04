@@ -55,7 +55,7 @@ class HomeController {
     return device;
   }
 
-  void sendTelemetry(Map<String, dynamic> telemetry) async {
+  Future<void> sendTelemetry(Map<String, dynamic> telemetry) async {
     await deviceRepository.sendTelemetry(telemetry);
   }
 }

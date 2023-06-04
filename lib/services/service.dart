@@ -94,6 +94,12 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  late Position position;
+  late Position position_lowest;
+
+  final Map<String, dynamic> mapBluetoothScannedDevices =
+      Map<String, dynamic>();
+
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
 
@@ -138,18 +144,43 @@ void onStart(ServiceInstance service) async {
     // do something with scan results
     print('bluetooth scan :');
 
-    // final Map<String, dynamic> jsonResult = Map<String, dynamic>();
-
     bluetoothDevicesList = "";
     for (ScanResult r in results) {
       bluetoothDevicesList = '${bluetoothDevicesList}, ${r.device.name} ';
       print('${r.device.name} found! id: ${r.device.id} rssi: ${r.rssi}');
+      mapBluetoothScannedDevices.putIfAbsent(
+          r.device.id.toString(),
+          () => {
+                "name": r.device.name,
+                "rssi": r.rssi,
+                "advertisementData": r.advertisementData.toString(),
+                "device": r.device.toString()
+              });
     }
+
+    // homeController.sendTelemetry(jsonResult);
 
     // homeController.sendTelemetry();
   });
 
+  // Timer pour envoi data recoltées
+
   Timer.periodic(const Duration(seconds: 60), (timer) async {
+    await homeController.sendTelemetry({
+      "longitude": position.longitude,
+      "latitude": position.latitude,
+      "position": jsonPosition(position),
+      "position_lowest": jsonPosition(position_lowest),
+      "bluetooth": mapBluetoothScannedDevices
+    });
+
+    mapBluetoothScannedDevices.clear();
+
+    return;
+  });
+
+  // Timer pour collecte Geolocalisation
+  Timer.periodic(const Duration(seconds: 30), (timer) async {
     // cf https://stackoverflow.com/a/71761201
     LocationPermission permission;
 
@@ -166,17 +197,19 @@ void onStart(ServiceInstance service) async {
       return;
     }
 
-    Position position = await Geolocator.getCurrentPosition(
+    position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    homeController.sendTelemetry(
-        {"longitude": position.longitude, "latitude": position.latitude});
+
+    position_lowest = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.lowest);
 
     print(
         'Location Position : ${position.longitude.toString()} :${position.latitude.toString()}');
     return;
   });
 
-  Timer.periodic(const Duration(seconds: 60), (timer) async {
+  // timer pour collecte scan bluetooth
+  Timer.periodic(const Duration(seconds: 30), (timer) async {
     var res = await FlutterBluePlus.instance.isOn;
     if (res) {
       if (await Permission.bluetoothConnect.isGranted) {
@@ -246,4 +279,15 @@ void onStart(ServiceInstance service) async {
       FlutterBluePlus.instance.turnOn();
     }
   }
+}
+
+Map<String, dynamic> jsonPosition(Position positionx) {
+  return {
+    "accuracy": positionx.accuracy,
+    "altitude": positionx.altitude,
+    "floor": positionx.floor,
+    "heading": positionx.heading,
+    "speed": positionx.speed,
+    "speed_accuracy": positionx.speedAccuracy
+  };
 }

@@ -22,6 +22,14 @@ class PermissionLocationWidgetState extends State<PermissionLocationWidget> {
     _timer = Timer.periodic(Duration(seconds: 5), (_) async {
       bool previousIsLocationEnabled = this.isLocationEnabled;
 
+      final granted = await Permission.locationAlways.isGranted;
+      if (granted) {
+        this.isLocationEnabled = true;
+        if (this.isLocationEnabled != previousIsLocationEnabled)
+          setState(() {});
+        return;
+      }
+
       try {
         Map<Permission, PermissionStatus> statuses = await [
           Permission.locationWhenInUse,

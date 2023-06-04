@@ -23,6 +23,14 @@ class PermissionNotificationWidgetState
     _timer = Timer.periodic(Duration(seconds: 5), (_) async {
       bool previousIsNotificationEnabled = this.isNotificationEnabled;
 
+      final granted = await Permission.notification.isGranted;
+      if (granted) {
+        this.isNotificationEnabled = true;
+        if (this.isNotificationEnabled != previousIsNotificationEnabled)
+          setState(() {});
+        return;
+      }
+
       try {
         Map<Permission, PermissionStatus> statuses = await [
           Permission.notification
