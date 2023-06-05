@@ -46,6 +46,7 @@ dependencies:
   get_it: ^7.6.0
   android_id: ^0.3.3
   geolocator: ^9.0.2
+  wifi_scan: ^0.4.0+1
 
 dev_dependencies:
   flutter_test:

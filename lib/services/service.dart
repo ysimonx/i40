@@ -10,6 +10,7 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:wifi_scan/wifi_scan.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
@@ -17,6 +18,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../di/service_locator.dart';
 import '../ui/controller.dart';
+import 'service_telemetry.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
@@ -94,12 +96,14 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
-  bool hasPositionBeenUpdated = false;
+  bool hasPositionBeenRecentlyUpdated = false;
   late Position position;
   late Position positionLowest;
 
   final Map<String, dynamic> mapBluetoothScannedDevices =
       Map<String, dynamic>();
+
+  final Map<String, dynamic> mapWifiScannedNetworks = Map<String, dynamic>();
 
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
@@ -158,28 +162,24 @@ void onStart(ServiceInstance service) async {
                 "device": r.device.toString()
               });
     }
-
-    // homeController.sendTelemetry(jsonResult);
-
-    // homeController.sendTelemetry();
   });
 
   // Timer pour envoi data recoltées
-
   Timer.periodic(const Duration(seconds: 60), (timer) async {
-    if (!hasPositionBeenUpdated) {
+    if (!hasPositionBeenRecentlyUpdated) {
       print("Position has not been recently updated : dont send telemetry");
-      mapBluetoothScannedDevices.clear();
-      return;
+    } else {
+      await sendTelemetry(
+          homeController: homeController,
+          position: position,
+          position_lowest: positionLowest,
+          mapBluetoothScannedDevices: mapBluetoothScannedDevices,
+          mapWifiScannedNetworks: mapWifiScannedNetworks);
     }
 
-    await sendTelemetry(
-        homeController: homeController,
-        position: position,
-        position_lowest: positionLowest,
-        mapBluetoothScannedDevices: mapBluetoothScannedDevices);
-
+    // reinit collected telemetry data;
     mapBluetoothScannedDevices.clear();
+    mapWifiScannedNetworks.clear();
     return;
   });
 
@@ -188,7 +188,7 @@ void onStart(ServiceInstance service) async {
     // cf https://stackoverflow.com/a/71761201
     LocationPermission permission;
 
-    hasPositionBeenUpdated = false;
+    hasPositionBeenRecentlyUpdated = false;
 
     bool serviceEnabled;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -209,7 +209,7 @@ void onStart(ServiceInstance service) async {
     positionLowest = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.lowest);
 
-    hasPositionBeenUpdated = true;
+    hasPositionBeenRecentlyUpdated = true;
 
     print(
         'Location Position : ${position.longitude.toString()} :${position.latitude.toString()}');
@@ -224,6 +224,27 @@ void onStart(ServiceInstance service) async {
         FlutterBluePlus.instance.startScan(
             scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 5));
       }
+    }
+  });
+
+  Timer.periodic(const Duration(seconds: 30), (timer) async {
+    final can = await WiFiScan.instance.canStartScan();
+    // if can-not, then show error
+    if (can != CanStartScan.yes) {
+      print("can not scan wifi");
+      return;
+    }
+    final results = await WiFiScan.instance.getScannedResults();
+    print(results.toString());
+    for (WiFiAccessPoint r in results) {
+      mapWifiScannedNetworks.putIfAbsent(
+          r.bssid,
+          () => {
+                "ssid": r.ssid,
+                "capabilities": r.capabilities,
+                "frequency": r.frequency,
+                "level": r.level,
+              });
     }
   });
 
@@ -287,39 +308,4 @@ void onStart(ServiceInstance service) async {
       FlutterBluePlus.instance.turnOn();
     }
   }
-}
-
-Future<void> sendTelemetry(
-    {homeController,
-    position,
-    position_lowest,
-    mapBluetoothScannedDevices}) async {
-  Map<String, dynamic> telemetry = {
-    "longitude": position.longitude,
-    "latitude": position.latitude,
-    "position": jsonPosition(position),
-    "position_lowest": jsonPosition(position_lowest)
-  };
-
-  // si je n'ai pas eu de devices bluetooth scannés, c'est peut etre parce
-  // le telephone etait en veille ... et pourtant, les devices sont peut
-  // etre présents ... alors, je prefere ne rien envoyer
-  if (mapBluetoothScannedDevices.isNotEmpty) {
-    telemetry.addAll({"bluetooth": mapBluetoothScannedDevices});
-  }
-
-  await homeController.sendTelemetry(telemetry);
-
-  return;
-}
-
-Map<String, dynamic> jsonPosition(Position positionx) {
-  return {
-    "accuracy": positionx.accuracy,
-    "altitude": positionx.altitude,
-    "floor": positionx.floor,
-    "heading": positionx.heading,
-    "speed": positionx.speed,
-    "speed_accuracy": positionx.speedAccuracy
-  };
 }
