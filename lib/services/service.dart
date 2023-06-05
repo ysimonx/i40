@@ -94,8 +94,9 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  bool hasPositionBeenUpdated = false;
   late Position position;
-  late Position position_lowest;
+  late Position positionLowest;
 
   final Map<String, dynamic> mapBluetoothScannedDevices =
       Map<String, dynamic>();
@@ -166,16 +167,19 @@ void onStart(ServiceInstance service) async {
   // Timer pour envoi data recoltées
 
   Timer.periodic(const Duration(seconds: 60), (timer) async {
-    await homeController.sendTelemetry({
-      "longitude": position.longitude,
-      "latitude": position.latitude,
-      "position": jsonPosition(position),
-      "position_lowest": jsonPosition(position_lowest),
-      "bluetooth": mapBluetoothScannedDevices
-    });
+    if (!hasPositionBeenUpdated) {
+      print("Position has not been recently updated : dont send telemetry");
+      mapBluetoothScannedDevices.clear();
+      return;
+    }
+
+    await sendTelemetry(
+        homeController: homeController,
+        position: position,
+        position_lowest: positionLowest,
+        mapBluetoothScannedDevices: mapBluetoothScannedDevices);
 
     mapBluetoothScannedDevices.clear();
-
     return;
   });
 
@@ -183,6 +187,8 @@ void onStart(ServiceInstance service) async {
   Timer.periodic(const Duration(seconds: 30), (timer) async {
     // cf https://stackoverflow.com/a/71761201
     LocationPermission permission;
+
+    hasPositionBeenUpdated = false;
 
     bool serviceEnabled;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -200,8 +206,10 @@ void onStart(ServiceInstance service) async {
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
-    position_lowest = await Geolocator.getCurrentPosition(
+    positionLowest = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.lowest);
+
+    hasPositionBeenUpdated = true;
 
     print(
         'Location Position : ${position.longitude.toString()} :${position.latitude.toString()}');
@@ -279,6 +287,30 @@ void onStart(ServiceInstance service) async {
       FlutterBluePlus.instance.turnOn();
     }
   }
+}
+
+Future<void> sendTelemetry(
+    {homeController,
+    position,
+    position_lowest,
+    mapBluetoothScannedDevices}) async {
+  Map<String, dynamic> telemetry = {
+    "longitude": position.longitude,
+    "latitude": position.latitude,
+    "position": jsonPosition(position),
+    "position_lowest": jsonPosition(position_lowest)
+  };
+
+  // si je n'ai pas eu de devices bluetooth scannés, c'est peut etre parce
+  // le telephone etait en veille ... et pourtant, les devices sont peut
+  // etre présents ... alors, je prefere ne rien envoyer
+  if (mapBluetoothScannedDevices.isNotEmpty) {
+    telemetry.addAll({"bluetooth": mapBluetoothScannedDevices});
+  }
+
+  await homeController.sendTelemetry(telemetry);
+
+  return;
 }
 
 Map<String, dynamic> jsonPosition(Position positionx) {
